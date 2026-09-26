@@ -2,17 +2,18 @@ const r = require("raylib");
 const t = require("./tasks");
 const m = require("./math");
 
-const REGIONWIDTH = 720;
-const REGIONHEIGHT = 480;
+const REGIONWIDTH = 800;
+const REGIONHEIGHT = 800;
 const FPS = 60;
 
-const scannerWidth = 50;
-const scannerHeight = REGIONHEIGHT;
+const scanner1Width = 50;
+const scanner2Width = 50;
 
-let scannerX = 0;
-const scannerY = 0;
+let scanner1X = 0;
+let scanner1Speed = -1;
 
-let scannerSpeed = -2;
+let scanner2X = m.half(REGIONWIDTH);
+let scanner2speed = -2;
 
 function running() {
     return !r.WindowShouldClose();
@@ -24,19 +25,37 @@ function setup() {
 }
 
 function update() {
-    const sRangeStart = 0;
-    const sRangeEnd = m.sub(REGIONWIDTH, scannerWidth);
+    const s1RangeStart = 0;
+    const s1RangeEnd = m.sub(m.half(REGIONWIDTH), scanner1Width);
 
-    scannerSpeed = t.moveScanner(
-        scannerX,
-        scannerSpeed,
-        sRangeStart,
-        sRangeEnd,
+    scanner1Speed = t.moveScanner(
+        scanner1X,
+        scanner1Speed,
+        s1RangeStart,
+        s1RangeEnd,
     );
-    scannerX += scannerSpeed;
+    scanner1X += scanner1Speed;
+
+    const s2RangeStart = m.half(REGIONWIDTH);
+    const s2RangeEnd = m.sub(REGIONWIDTH, scanner2Width);
+
+    scanner2speed = t.moveScanner(
+        scanner2X,
+        scanner2speed,
+        s2RangeStart,
+        s2RangeEnd,
+    );
+
+    scanner2X += scanner2speed;
 }
 
-function createScanner(scannerColor) {
+function createScanner(
+    scannerX,
+    scannerY,
+    scannerWidth,
+    scannerHeight,
+    scannerColor,
+) {
     r.DrawRectangle(
         scannerX,
         scannerY,
@@ -52,7 +71,7 @@ function createParticle(pfRangeStart, pfRangeEnd) {
 
     const particleWidth = m.sub(pfRangeEnd, pfRangeStart);
     const particleHeight = REGIONHEIGHT;
-    const particleColor = r.BLUE;
+    const particleColor = r.SKYBLUE;
 
     r.DrawRectangle(
         particleX,
@@ -64,18 +83,30 @@ function createParticle(pfRangeStart, pfRangeEnd) {
 }
 
 function draw() {
-    const pf1RangeStart = 240;
-    const pf1RangeEnd = 360;
-    const pf1TouchPoint = m.sub(pf1RangeStart, scannerWidth);
+    const scanner1Height = REGIONHEIGHT;
+    const scanner1Y = 0;
+
+    const scanner2Height = REGIONHEIGHT;
+    const scanner2Y = 0;
+
+    const pf1RangeStart = 200;
+    const pf1RangeEnd = m.half(REGIONWIDTH);
+    const pf1TouchPoint = m.sub(pf1RangeStart, scanner1Width);
 
     const pf2RangeStart = 480;
     const pf2RangeEnd = 500;
-    const pf2TouchPoint = m.sub(pf2RangeStart, scannerWidth);
+    const pf2TouchPoint = m.sub(pf2RangeStart, scanner2Width);
 
-    const scannerColor =
-        t.isOverLapping(scannerX, pf1TouchPoint, pf1RangeEnd) ||
-        t.isOverLapping(scannerX, pf2TouchPoint, pf2RangeEnd)
-            ? r.RED
+    const scanner1Color =
+        t.isOverLapping(scanner1X, pf1TouchPoint, pf1RangeEnd) ||
+        t.isOverLapping(scanner1X, pf2TouchPoint, pf2RangeEnd)
+            ? r.ColorAlpha(r.RED, 0.7)
+            : r.WHITE;
+
+    const scanner2Color =
+        t.isOverLapping(scanner2X, pf2TouchPoint, pf2RangeEnd) ||
+        t.isOverLapping(scanner2X, pf1TouchPoint, pf1RangeEnd)
+            ? r.ColorAlpha(r.RED, 0.7)
             : r.WHITE;
 
     r.BeginDrawing();
@@ -83,7 +114,21 @@ function draw() {
 
     createParticle(pf1RangeStart, pf1RangeEnd);
     createParticle(pf2RangeStart, pf2RangeEnd);
-    createScanner(scannerColor);
+
+    createScanner(
+        scanner1X,
+        scanner1Y,
+        scanner1Width,
+        scanner1Height,
+        scanner1Color,
+    );
+    createScanner(
+        scanner2X,
+        scanner2Y,
+        scanner2Width,
+        scanner2Height,
+        scanner2Color,
+    );
 
     r.EndDrawing();
 }
