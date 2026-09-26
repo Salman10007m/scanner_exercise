@@ -22,6 +22,7 @@ function running() {
 function setup() {
     r.InitWindow(REGIONWIDTH, REGIONHEIGHT, "Scanner");
     r.SetTargetFPS(FPS);
+    r.SetTraceLogLevel(r.LOG_NONE);
 }
 
 function update() {
