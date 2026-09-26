@@ -8,8 +8,8 @@ const FPS = 60;
 const scannerWidth = 50;
 const scannerHeight = REGIONHEIGHT;
 
-const rangeStart = 0;
-const rangeEnd = REGIONWIDTH - scannerWidth;
+const sRangeStart = 0;
+const sRangeEnd = REGIONWIDTH - scannerWidth;
 
 let scannerX = 0;
 const scannerY = 0;
@@ -26,19 +26,34 @@ function setup() {
 }
 
 function update() {
-    scannerSpeed = t.moveScanner(scannerX, scannerSpeed, rangeStart, rangeEnd);
+    scannerSpeed = t.moveScanner(
+        scannerX,
+        scannerSpeed,
+        sRangeStart,
+        sRangeEnd,
+    );
     scannerX += scannerSpeed;
 }
 
-function createScanner() {
-    r.DrawRectangle(scannerX, scannerY, scannerWidth, scannerHeight, r.WHITE);
+function createScanner(pfTouchPoint, pfRangeEnd) {
+    const scannerColor = t.isOverLapping(scannerX, pfTouchPoint, pfRangeEnd)
+        ? r.RED
+        : r.WHITE;
+
+    r.DrawRectangle(
+        scannerX,
+        scannerY,
+        scannerWidth,
+        scannerHeight,
+        scannerColor,
+    );
 }
 
-function createParticle(pRangeStart, pRangeEnd) {
-    const particleX = pRangeStart;
+function createParticle(pfRangeStart, pfRangeEnd) {
+    const particleX = pfRangeStart;
     const particleY = 0;
 
-    const particleWidth = pRangeEnd - pRangeStart;
+    const particleWidth = pfRangeEnd - pfRangeStart;
     const particleHeight = REGIONHEIGHT;
     const particleColor = r.BLUE;
 
@@ -52,14 +67,15 @@ function createParticle(pRangeStart, pRangeEnd) {
 }
 
 function draw() {
-    const pRangeStart = 240;
-    const pRangeEnd = 360;
+    const pfRangeStart = 240;
+    const pfRangeEnd = 360;
+    const pfTouchPoint = pfRangeStart - scannerWidth;
 
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
 
-    createParticle(pRangeStart, pRangeEnd);
-    createScanner();
+    createParticle(pfRangeStart, pfRangeEnd);
+    createScanner(pfTouchPoint, pfRangeEnd);
 
     r.EndDrawing();
 }

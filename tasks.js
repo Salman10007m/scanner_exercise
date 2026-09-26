@@ -4,6 +4,13 @@ function moveScanner(scannerX, scannerSpeed, rangeStart, rangeEnd) {
         : scannerSpeed;
 }
 
+function isOverLapping(scannerRoute, pfRangeTouch, pfRangeEnd) {
+    return scannerRoute >= pfRangeTouch && scannerRoute <= pfRangeEnd
+        ? true
+        : false;
+}
+
 module.exports = {
     moveScanner,
+    isOverLapping,
 };
