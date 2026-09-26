@@ -14,7 +14,7 @@ const rangeEnd = REGIONWIDTH - scannerWidth;
 let scannerX = 0;
 const scannerY = 0;
 
-let scannerSpeed = -1;
+let scannerSpeed = -2;
 
 function running() {
     return !r.WindowShouldClose();
@@ -34,10 +34,31 @@ function createScanner() {
     r.DrawRectangle(scannerX, scannerY, scannerWidth, scannerHeight, r.WHITE);
 }
 
+function createParticle(pRangeStart, pRangeEnd) {
+    const particleX = pRangeStart;
+    const particleY = 0;
+
+    const particleWidth = pRangeEnd - pRangeStart;
+    const particleHeight = REGIONHEIGHT;
+    const particleColor = r.BLUE;
+
+    r.DrawRectangle(
+        particleX,
+        particleY,
+        particleWidth,
+        particleHeight,
+        particleColor,
+    );
+}
+
 function draw() {
+    const pRangeStart = 240;
+    const pRangeEnd = 360;
+
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
 
+    createParticle(pRangeStart, pRangeEnd);
     createScanner();
 
     r.EndDrawing();
