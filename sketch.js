@@ -80,21 +80,38 @@ function createScanner(
     );
 }
 
-function createParticle(pfRangeStart, pfRangeEnd) {
-    const particleX = pfRangeStart;
-    const particleY = 0;
-
-    const particleWidth = m.sub(pfRangeEnd, pfRangeStart);
-    const particleHeight = REGIONHEIGHT;
+function createParticle(direction, pfRangeStart, pfRangeEnd) {
     const particleColor = r.SKYBLUE;
 
-    r.DrawRectangle(
-        particleX,
-        particleY,
-        particleWidth,
-        particleHeight,
-        particleColor,
-    );
+    if (direction === "Horizontal") {
+        const particleX = pfRangeStart;
+        const particleY = 0;
+
+        const particleWidth = m.sub(pfRangeEnd, pfRangeStart);
+        const particleHeight = REGIONHEIGHT;
+
+        r.DrawRectangle(
+            particleX,
+            particleY,
+            particleWidth,
+            particleHeight,
+            particleColor,
+        );
+    } else {
+        const particleX = 0;
+        const particleY = pfRangeStart;
+
+        const particleWidth = REGIONWIDTH;
+        const particleHeight = m.sub(pfRangeEnd, pfRangeStart);
+
+        r.DrawRectangle(
+            particleX,
+            particleY,
+            particleWidth,
+            particleHeight,
+            particleColor,
+        );
+    }
 }
 
 function draw() {
@@ -107,6 +124,9 @@ function draw() {
     const scanner3Width = REGIONWIDTH;
     const scanner3X = 0;
 
+    const horizontal = "Horizontal";
+    const vertical = "Vertical";
+
     const pf1RangeStart = 200;
     const pf1RangeEnd = m.half(REGIONWIDTH);
     const pf1TouchPoint = m.sub(pf1RangeStart, scanner1Width);
@@ -114,6 +134,9 @@ function draw() {
     const pf2RangeStart = 480;
     const pf2RangeEnd = 500;
     const pf2TouchPoint = m.sub(pf2RangeStart, scanner2Width);
+
+    const pf3RangeStart = 200;
+    const pf3RangeEnd = 250;
 
     const scanner1Color =
         t.isOverLapping(scanner1X, pf1TouchPoint, pf1RangeEnd) ||
@@ -130,8 +153,9 @@ function draw() {
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
 
-    createParticle(pf1RangeStart, pf1RangeEnd);
-    createParticle(pf2RangeStart, pf2RangeEnd);
+    createParticle(horizontal, pf1RangeStart, pf1RangeEnd);
+    createParticle(horizontal, pf2RangeStart, pf2RangeEnd);
+    createParticle(vertical, pf3RangeStart, pf3RangeEnd);
 
     createScanner(
         scanner1X,
@@ -147,8 +171,8 @@ function draw() {
         scanner2Height,
         scanner2Color,
     );
-
     createScanner(scanner3X, scanner3Y, scanner3Width, scanner3Height, r.WHITE);
+
     r.EndDrawing();
 }
 
