@@ -8,12 +8,16 @@ const FPS = 60;
 
 const scanner1Width = 50;
 const scanner2Width = 50;
+const scanner3Height = 50;
 
 let scanner1X = 0;
 let scanner1Speed = -1;
 
 let scanner2X = m.half(REGIONWIDTH);
-let scanner2speed = -2;
+let scanner2Speed = -2;
+
+let scanner3Y = 0;
+let scanner3Speed = -3;
 
 function running() {
     return !r.WindowShouldClose();
@@ -29,6 +33,12 @@ function update() {
     const s1RangeStart = 0;
     const s1RangeEnd = m.sub(m.half(REGIONWIDTH), scanner1Width);
 
+    const s2RangeStart = m.half(REGIONWIDTH);
+    const s2RangeEnd = m.sub(REGIONWIDTH, scanner2Width);
+
+    const s3RangeStart = 0;
+    const s3RangeEnd = m.sub(REGIONHEIGHT, scanner3Height);
+
     scanner1Speed = t.moveScanner(
         scanner1X,
         scanner1Speed,
@@ -37,17 +47,21 @@ function update() {
     );
     scanner1X += scanner1Speed;
 
-    const s2RangeStart = m.half(REGIONWIDTH);
-    const s2RangeEnd = m.sub(REGIONWIDTH, scanner2Width);
-
-    scanner2speed = t.moveScanner(
+    scanner2Speed = t.moveScanner(
         scanner2X,
-        scanner2speed,
+        scanner2Speed,
         s2RangeStart,
         s2RangeEnd,
     );
+    scanner2X += scanner2Speed;
 
-    scanner2X += scanner2speed;
+    scanner3Speed = t.moveScanner(
+        scanner3Y,
+        scanner3Speed,
+        s3RangeStart,
+        s3RangeEnd,
+    );
+    scanner3Y += scanner3Speed;
 }
 
 function createScanner(
@@ -90,6 +104,9 @@ function draw() {
     const scanner2Height = REGIONHEIGHT;
     const scanner2Y = 0;
 
+    const scanner3Width = REGIONWIDTH;
+    const scanner3X = 0;
+
     const pf1RangeStart = 200;
     const pf1RangeEnd = m.half(REGIONWIDTH);
     const pf1TouchPoint = m.sub(pf1RangeStart, scanner1Width);
@@ -131,6 +148,7 @@ function draw() {
         scanner2Color,
     );
 
+    createScanner(scanner3X, scanner3Y, scanner3Width, scanner3Height, r.WHITE);
     r.EndDrawing();
 }
 

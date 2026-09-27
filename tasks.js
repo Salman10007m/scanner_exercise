@@ -1,6 +1,6 @@
-function moveScanner(scannerX, scannerSpeed, rangeStart, rangeEnd) {
+function moveScanner(scannerCoord, scannerSpeed, rangeStart, rangeEnd) {
     const speed =
-        scannerX <= rangeStart || scannerX >= rangeEnd
+        scannerCoord <= rangeStart || scannerCoord >= rangeEnd
             ? -scannerSpeed
             : scannerSpeed;
 
