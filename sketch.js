@@ -11,13 +11,13 @@ const scanner2Width = 50;
 const scanner3Height = 50;
 
 let scanner1X = 0;
-let scanner1Speed = -1;
+let scanner1Speed = -2;
 
 let scanner2X = m.half(REGIONWIDTH);
 let scanner2Speed = -2;
 
 let scanner3Y = 0;
-let scanner3Speed = -3;
+let scanner3Speed = -1;
 
 function running() {
     return !r.WindowShouldClose();
@@ -127,28 +127,35 @@ function draw() {
     const horizontal = "Horizontal";
     const vertical = "Vertical";
 
-    const pf1RangeStart = 200;
-    const pf1RangeEnd = m.half(REGIONWIDTH);
-    const pf1TouchPoint = m.sub(pf1RangeStart, scanner1Width);
+    const pf1RangeStart = 0;
+    const pf1RangeEnd = 100;
 
-    const pf2RangeStart = 480;
-    const pf2RangeEnd = 500;
-    const pf2TouchPoint = m.sub(pf2RangeStart, scanner2Width);
+    const pf2RangeStart = m.half(REGIONWIDTH);
+    const pf2RangeEnd = 700;
 
-    const pf3RangeStart = 200;
-    const pf3RangeEnd = 250;
+    const pf3RangeStart = 500;
+    const pf3RangeEnd = 505;
 
     const scanner1Color =
-        t.isOverLapping(scanner1X, pf1TouchPoint, pf1RangeEnd) ||
-        t.isOverLapping(scanner1X, pf2TouchPoint, pf2RangeEnd)
+        t.isOverLapping(scanner1X, pf1RangeStart, pf1RangeEnd, scanner1Width) ||
+        t.isOverLapping(scanner1X, pf2RangeStart, pf2RangeEnd, scanner2Width)
             ? r.ColorAlpha(r.RED, 0.7)
             : r.WHITE;
 
     const scanner2Color =
-        t.isOverLapping(scanner2X, pf2TouchPoint, pf2RangeEnd) ||
-        t.isOverLapping(scanner2X, pf1TouchPoint, pf1RangeEnd)
+        t.isOverLapping(scanner2X, pf2RangeStart, pf2RangeEnd, scanner2Width) ||
+        t.isOverLapping(scanner2X, pf1RangeStart, pf1RangeEnd, scanner1Width)
             ? r.ColorAlpha(r.RED, 0.7)
             : r.WHITE;
+
+    const scanner3Color = t.isOverLapping(
+        scanner3Y,
+        pf3RangeStart,
+        pf3RangeEnd,
+        scanner3Height,
+    )
+        ? r.ColorAlpha(r.RED, 0.7)
+        : r.WHITE;
 
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
@@ -171,7 +178,13 @@ function draw() {
         scanner2Height,
         scanner2Color,
     );
-    createScanner(scanner3X, scanner3Y, scanner3Width, scanner3Height, r.WHITE);
+    createScanner(
+        scanner3X,
+        scanner3Y,
+        scanner3Width,
+        scanner3Height,
+        scanner3Color,
+    );
 
     r.EndDrawing();
 }

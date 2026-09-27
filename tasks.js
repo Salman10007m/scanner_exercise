@@ -7,7 +7,8 @@ function moveScanner(scannerCoord, scannerSpeed, rangeStart, rangeEnd) {
     return speed;
 }
 
-function isOverLapping(scannerRoute, pfRangeTouch, pfRangeEnd) {
+function isOverLapping(scannerRoute, pfRangeStart, pfRangeEnd, pfsize) {
+    const pfRangeTouch = pfRangeStart - pfsize;
     const isOverLapping =
         scannerRoute >= pfRangeTouch && scannerRoute <= pfRangeEnd
             ? true
