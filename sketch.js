@@ -1,189 +1,110 @@
 const r = require("raylib");
-const t = require("./tasks");
-const m = require("./math");
+const d = require("./detector.js");
+const d1 = require("./detector1.js");
+const d2 = require("./detector2.js");
+const d3 = require("./detector3.js");
+const f1 = require("./field1.js");
+const f2 = require("./field2.js");
+const f3 = require("./field3.js");
+const s = require("./screen.js");
 
-const REGIONWIDTH = 800;
-const REGIONHEIGHT = 800;
-const FPS = 60;
-
-const scanner1Width = 50;
-const scanner2Width = 50;
-const scanner3Height = 50;
-
-let scanner1X = 0;
-let scanner1Speed = -2;
-
-let scanner2X = m.half(REGIONWIDTH);
-let scanner2Speed = -2;
-
-let scanner3Y = 0;
-let scanner3Speed = -1;
+const HORIZONTAL = "Horizontal";
+const VERTICAL = "Vertical";
 
 function running() {
     return !r.WindowShouldClose();
 }
 
 function setup() {
-    r.InitWindow(REGIONWIDTH, REGIONHEIGHT, "Scanner");
-    r.SetTargetFPS(FPS);
+    r.InitWindow(s.SCREEN_WIDTH, s.SCREEN_HEIGHT, "Scanner");
+    r.SetTargetFPS(s.FPS);
     r.SetTraceLogLevel(r.LOG_NONE);
 }
 
 function update() {
-    const s1RangeStart = 0;
-    const s1RangeEnd = m.sub(m.half(REGIONWIDTH), scanner1Width);
-
-    const s2RangeStart = m.half(REGIONWIDTH);
-    const s2RangeEnd = m.sub(REGIONWIDTH, scanner2Width);
-
-    const s3RangeStart = 0;
-    const s3RangeEnd = m.sub(REGIONHEIGHT, scanner3Height);
-
-    scanner1Speed = t.moveScanner(
-        scanner1X,
-        scanner1Speed,
-        s1RangeStart,
-        s1RangeEnd,
+    d1.velocity = d.calcVelocity(
+        d1.range,
+        d1.velocity,
+        d1.startPos,
+        d1.endPos,
+        d1.width,
     );
-    scanner1X += scanner1Speed;
-
-    scanner2Speed = t.moveScanner(
-        scanner2X,
-        scanner2Speed,
-        s2RangeStart,
-        s2RangeEnd,
+    d1.range = d.calcDirection(d1.range, d1.velocity);
+    d1.detectedParticle = d.overLapping(
+        d1.range,
+        d1.width,
+        f1.start,
+        f1.width,
+        f2.start,
+        f2.width,
     );
-    scanner2X += scanner2Speed;
 
-    scanner3Speed = t.moveScanner(
-        scanner3Y,
-        scanner3Speed,
-        s3RangeStart,
-        s3RangeEnd,
+    d2.velocity = d.calcVelocity(
+        d2.range,
+        d2.velocity,
+        d2.startPos,
+        d2.endPos,
+        d2.width,
     );
-    scanner3Y += scanner3Speed;
+    d2.range = d.calcDirection(d2.range, d2.velocity);
+    d2.detectedParticle = d.overLapping(
+        d2.range,
+        d2.width,
+        f1.start,
+        f1.width,
+        f2.start,
+        f2.width,
+    );
+
+    d3.velocity = d.calcVelocity(
+        d3.range,
+        d3.velocity,
+        d3.startPos,
+        d3.endPos,
+        d3.height,
+    );
+    d3.range = d.calcDirection(d3.range, d3.velocity);
+    d3.detectedParticle = d.isOverLapping(
+        d3.range,
+        d3.height,
+        f3.start,
+        f3.width,
+    );
 }
 
-function createScanner(
-    scannerX,
-    scannerY,
-    scannerWidth,
-    scannerHeight,
-    scannerColor,
-) {
-    r.DrawRectangle(
-        scannerX,
-        scannerY,
-        scannerWidth,
-        scannerHeight,
-        scannerColor,
-    );
-}
-
-function createParticle(direction, pfRangeStart, pfRangeEnd) {
-    const particleColor = r.SKYBLUE;
-
-    if (direction === "Horizontal") {
-        const particleX = pfRangeStart;
-        const particleY = 0;
-
-        const particleWidth = m.sub(pfRangeEnd, pfRangeStart);
-        const particleHeight = REGIONHEIGHT;
-
-        r.DrawRectangle(
-            particleX,
-            particleY,
-            particleWidth,
-            particleHeight,
-            particleColor,
-        );
+function createRange(direction, start, size, color) {
+    if (direction === HORIZONTAL) {
+        r.DrawRectangle(start, 0, size, s.SCREEN_HEIGHT, color);
     } else {
-        const particleX = 0;
-        const particleY = pfRangeStart;
-
-        const particleWidth = REGIONWIDTH;
-        const particleHeight = m.sub(pfRangeEnd, pfRangeStart);
-
-        r.DrawRectangle(
-            particleX,
-            particleY,
-            particleWidth,
-            particleHeight,
-            particleColor,
-        );
+        r.DrawRectangle(0, start, s.SCREEN_WIDTH, size, color);
     }
 }
 
 function draw() {
-    const scanner1Height = REGIONHEIGHT;
-    const scanner1Y = 0;
-
-    const scanner2Height = REGIONHEIGHT;
-    const scanner2Y = 0;
-
-    const scanner3Width = REGIONWIDTH;
-    const scanner3X = 0;
-
-    const horizontal = "Horizontal";
-    const vertical = "Vertical";
-
-    const pf1RangeStart = 0;
-    const pf1RangeEnd = 100;
-
-    const pf2RangeStart = m.half(REGIONWIDTH);
-    const pf2RangeEnd = 700;
-
-    const pf3RangeStart = 500;
-    const pf3RangeEnd = 505;
-
-    const scanner1Color =
-        t.isOverLapping(scanner1X, pf1RangeStart, pf1RangeEnd, scanner1Width) ||
-        t.isOverLapping(scanner1X, pf2RangeStart, pf2RangeEnd, scanner2Width)
-            ? r.ColorAlpha(r.RED, 0.7)
-            : r.WHITE;
-
-    const scanner2Color =
-        t.isOverLapping(scanner2X, pf2RangeStart, pf2RangeEnd, scanner2Width) ||
-        t.isOverLapping(scanner2X, pf1RangeStart, pf1RangeEnd, scanner1Width)
-            ? r.ColorAlpha(r.RED, 0.7)
-            : r.WHITE;
-
-    const scanner3Color = t.isOverLapping(
-        scanner3Y,
-        pf3RangeStart,
-        pf3RangeEnd,
-        scanner3Height,
-    )
-        ? r.ColorAlpha(r.RED, 0.7)
-        : r.WHITE;
-
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
 
-    createParticle(horizontal, pf1RangeStart, pf1RangeEnd);
-    createParticle(horizontal, pf2RangeStart, pf2RangeEnd);
-    createParticle(vertical, pf3RangeStart, pf3RangeEnd);
+    createRange(HORIZONTAL, f1.start, f1.width, r.BLUE);
+    createRange(HORIZONTAL, f2.start, f2.width, r.BLUE);
+    createRange(VERTICAL, f3.start, f3.width, r.BLUE);
 
-    createScanner(
-        scanner1X,
-        scanner1Y,
-        scanner1Width,
-        scanner1Height,
-        scanner1Color,
+    createRange(
+        HORIZONTAL,
+        d1.range,
+        d1.width,
+        d1.detectedParticle ? r.RED : r.WHITE,
     );
-    createScanner(
-        scanner2X,
-        scanner2Y,
-        scanner2Width,
-        scanner2Height,
-        scanner2Color,
+    createRange(
+        HORIZONTAL,
+        d2.range,
+        d2.width,
+        d2.detectedParticle ? r.RED : r.WHITE,
     );
-    createScanner(
-        scanner3X,
-        scanner3Y,
-        scanner3Width,
-        scanner3Height,
-        scanner3Color,
+    createRange(
+        VERTICAL,
+        d3.range,
+        d3.height,
+        d3.detectedParticle ? r.RED : r.WHITE,
     );
 
     r.EndDrawing();
