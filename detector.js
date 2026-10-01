@@ -1,15 +1,15 @@
-function isOutOfBound(start, startPos, endTouch) {
-    return start < startPos || start > endTouch;
+function isOutOfBound(range, startPos, endTouch) {
+    return range < startPos || range > endTouch;
 }
 
-function calcVelocity(start, velocity, startPos, endPos, dSize) {
+function calcVelocity(range, velocity, startPos, endPos, dSize) {
     const endTouch = endPos - dSize;
 
-    return isOutOfBound(start, startPos, endTouch) ? -velocity : velocity;
+    return isOutOfBound(range, startPos, endTouch) ? -velocity : velocity;
 }
 
-function calcDirection(start, velocity) {
-    return start + velocity;
+function calcDirection(range, velocity) {
+    return range + velocity;
 }
 
 function isOverLapping(dStart, dWidth, fStart, fWidth) {

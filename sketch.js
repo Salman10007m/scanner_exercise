@@ -1,23 +1,67 @@
 const r = require("raylib");
 const d = require("./detector.js");
-const d1 = require("./detector1.js");
-const d2 = require("./detector2.js");
-const d3 = require("./detector3.js");
-const f1 = require("./field1.js");
-const f2 = require("./field2.js");
-const f3 = require("./field3.js");
-const s = require("./screen.js");
 
-const HORIZONTAL = "Horizontal";
-const VERTICAL = "Vertical";
+const screen = {
+    WIDTH: 800,
+    HEIGHT: 800,
+    FPS: 60,
+};
+
+const d1 = {
+    direction: "Horizontal",
+    range: 0,
+    width: 50,
+    velocity: 2,
+    startPos: 0,
+    endPos: screen.WIDTH / 2,
+    detectedField: false,
+};
+
+const d2 = {
+    direction: "Horizontal",
+    width: 50,
+    range: screen.WIDTH / 2,
+    velocity: 2,
+    startPos: screen.WIDTH / 2,
+    endPos: screen.WIDTH,
+    detectedField: false,
+};
+
+const d3 = {
+    direction: "Vertical",
+    height: 50,
+    range: 0,
+    velocity: 2,
+    startPos: 0,
+    endPos: screen.HEIGHT,
+    detectedField: false,
+};
+
+const f1 = {
+    direction: "Horizontal",
+    start: 200,
+    width: 100,
+};
+
+const f2 = {
+    direction: "Horizontal",
+    start: 400,
+    width: 50,
+};
+
+const f3 = {
+    direction: "Vertical",
+    start: 500,
+    width: 50,
+};
 
 function running() {
     return !r.WindowShouldClose();
 }
 
 function setup() {
-    r.InitWindow(s.SCREEN_WIDTH, s.SCREEN_HEIGHT, "Scanner");
-    r.SetTargetFPS(s.FPS);
+    r.InitWindow(screen.WIDTH, screen.HEIGHT, "Scanner");
+    r.SetTargetFPS(screen.FPS);
     r.SetTraceLogLevel(r.LOG_NONE);
 }
 
@@ -73,10 +117,10 @@ function update() {
 }
 
 function createRange(direction, start, size, color) {
-    if (direction === HORIZONTAL) {
-        r.DrawRectangle(start, 0, size, s.SCREEN_HEIGHT, color);
+    if (direction === "Horizontal") {
+        r.DrawRectangle(start, 0, size, screen.HEIGHT, color);
     } else {
-        r.DrawRectangle(0, start, s.SCREEN_WIDTH, size, color);
+        r.DrawRectangle(0, start, screen.WIDTH, size, color);
     }
 }
 
@@ -84,24 +128,24 @@ function draw() {
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
 
-    createRange(HORIZONTAL, f1.start, f1.width, r.BLUE);
-    createRange(HORIZONTAL, f2.start, f2.width, r.BLUE);
-    createRange(VERTICAL, f3.start, f3.width, r.BLUE);
+    createRange(f1.direction, f1.start, f1.width, r.BLUE);
+    createRange(f2.direction, f2.start, f2.width, r.BLUE);
+    createRange(f3.direction, f3.start, f3.width, r.BLUE);
 
     createRange(
-        HORIZONTAL,
+        d1.direction,
         d1.range,
         d1.width,
         d1.detectedParticle ? r.RED : r.WHITE,
     );
     createRange(
-        HORIZONTAL,
+        d2.direction,
         d2.range,
         d2.width,
         d2.detectedParticle ? r.RED : r.WHITE,
     );
     createRange(
-        VERTICAL,
+        d3.direction,
         d3.range,
         d3.height,
         d3.detectedParticle ? r.RED : r.WHITE,
