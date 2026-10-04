@@ -1,34 +1,49 @@
-function isOutOfBound(range, startPos, endTouch) {
-    return range < startPos || range > endTouch;
+const range = require("./range");
+const r = require("raylib");
+
+function createDetector(size, start, endPos, velocity, direction, screenSize) {
+    const startPos = start;
+    return {
+        direction,
+        size,
+        start,
+        startPos,
+        endPos,
+        velocity,
+        screenSize,
+        detectedParticle: false,
+    };
 }
 
-function calcVelocity(range, velocity, startPos, endPos, dSize) {
-    const endTouch = endPos - dSize;
-
-    return isOutOfBound(range, startPos, endTouch) ? -velocity : velocity;
+function isOutOfBound(detector) {
+    const endTouch = detector.endPos - detector.size;
+    return detector.start < detector.startPos || detector.start > endTouch;
 }
 
-function calcDirection(range, velocity) {
-    return range + velocity;
+function newVelocity(detector) {
+    detector.velocity = isOutOfBound(detector)
+        ? -detector.velocity
+        : detector.velocity;
+    return detector;
 }
 
-function isOverLapping(dStart, dWidth, fStart, fWidth) {
-    const dEnd = dStart + dWidth;
-    const fEnd = fStart + fWidth;
-
-    return dStart < fEnd && fStart < dEnd;
+function currentPosition(detector) {
+    detector.start = detector.start + detector.velocity;
+    return detector;
 }
 
-function overLapping(dStart, dWidth, f1Start, f1Width, f2Start, f2Width) {
-    const isF1OverLapping = isOverLapping(dStart, dWidth, f1Start, f1Width);
-    const isF2OverLapping = isOverLapping(dStart, dWidth, f2Start, f2Width);
+function chooseColor(d) {
+    return d.detectedParticle ? r.RED : r.WHITE;
+}
 
-    return isF1OverLapping || isF2OverLapping;
+function draw(d) {
+    d.color = chooseColor(d);
+    range.draw(d);
 }
 
 module.exports = {
-    calcVelocity,
-    calcDirection,
-    isOverLapping,
-    overLapping,
+    newVelocity,
+    currentPosition,
+    createDetector,
+    draw,
 };

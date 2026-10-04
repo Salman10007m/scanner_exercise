@@ -1,155 +1,61 @@
 const r = require("raylib");
 const d = require("./detector.js");
+const p = require("./particle.js");
+const range = require("./range.js");
 
-const screen = {
-    WIDTH: 800,
-    HEIGHT: 800,
-    FPS: 60,
-};
+let d1;
+let d2;
+let d3;
 
-const d1 = {
-    direction: "Horizontal",
-    range: 0,
-    width: 50,
-    velocity: 2,
-    startPos: 0,
-    endPos: screen.WIDTH / 2,
-    detectedField: false,
-};
-
-const d2 = {
-    direction: "Horizontal",
-    width: 50,
-    range: screen.WIDTH / 2,
-    velocity: 2,
-    startPos: screen.WIDTH / 2,
-    endPos: screen.WIDTH,
-    detectedField: false,
-};
-
-const d3 = {
-    direction: "Vertical",
-    height: 50,
-    range: 0,
-    velocity: 2,
-    startPos: 0,
-    endPos: screen.HEIGHT,
-    detectedField: false,
-};
-
-const f1 = {
-    direction: "Horizontal",
-    start: 200,
-    width: 100,
-};
-
-const f2 = {
-    direction: "Horizontal",
-    start: 400,
-    width: 50,
-};
-
-const f3 = {
-    direction: "Vertical",
-    start: 500,
-    width: 50,
-};
+let f1;
+let f2;
+let f3;
 
 function running() {
     return !r.WindowShouldClose();
 }
 
-function setup() {
-    r.InitWindow(screen.WIDTH, screen.HEIGHT, "Scanner");
-    r.SetTargetFPS(screen.FPS);
+function setup(WIDTH, HEIGHT, FPS) {
+    r.InitWindow(WIDTH, HEIGHT, "Scanner");
+    r.SetTargetFPS(FPS);
     r.SetTraceLogLevel(r.LOG_NONE);
+
+    d1 = d.createDetector(50, 0, WIDTH / 2, 2, "Horizontal", WIDTH);
+    d2 = d.createDetector(50, WIDTH / 2, WIDTH, 2, "Horizontal", WIDTH);
+    d3 = d.createDetector(50, 0, HEIGHT, 2, "vertical", HEIGHT);
+
+    f1 = p.createParticle("Horizontal", 200, 100, WIDTH);
+    f2 = p.createParticle("Horizontal", 400, 50, WIDTH);
+    f3 = p.createParticle("Vertical", 500, 50, HEIGHT);
+    f4 = p.createParticle("Vertical", 120, 50, HEIGHT);
 }
 
 function update() {
-    d1.velocity = d.calcVelocity(
-        d1.range,
-        d1.velocity,
-        d1.startPos,
-        d1.endPos,
-        d1.width,
-    );
-    d1.range = d.calcDirection(d1.range, d1.velocity);
-    d1.detectedParticle = d.overLapping(
-        d1.range,
-        d1.width,
-        f1.start,
-        f1.width,
-        f2.start,
-        f2.width,
-    );
+    d.newVelocity(d1);
+    d.currentPosition(d1);
+    d1.detectedParticle = range.overLaps(d1, f1, f2);
 
-    d2.velocity = d.calcVelocity(
-        d2.range,
-        d2.velocity,
-        d2.startPos,
-        d2.endPos,
-        d2.width,
-    );
-    d2.range = d.calcDirection(d2.range, d2.velocity);
-    d2.detectedParticle = d.overLapping(
-        d2.range,
-        d2.width,
-        f1.start,
-        f1.width,
-        f2.start,
-        f2.width,
-    );
+    d.newVelocity(d2);
+    d.currentPosition(d2);
+    d2.detectedParticle = range.overLaps(d2, f1, f2);
 
-    d3.velocity = d.calcVelocity(
-        d3.range,
-        d3.velocity,
-        d3.startPos,
-        d3.endPos,
-        d3.height,
-    );
-    d3.range = d.calcDirection(d3.range, d3.velocity);
-    d3.detectedParticle = d.isOverLapping(
-        d3.range,
-        d3.height,
-        f3.start,
-        f3.width,
-    );
-}
-
-function createRange(direction, start, size, color) {
-    if (direction === "Horizontal") {
-        r.DrawRectangle(start, 0, size, screen.HEIGHT, color);
-    } else {
-        r.DrawRectangle(0, start, screen.WIDTH, size, color);
-    }
+    d.newVelocity(d3);
+    d.currentPosition(d3);
+    d3.detectedParticle = range.overLaps(d3, f3, f4);
 }
 
 function draw() {
     r.BeginDrawing();
     r.ClearBackground(r.BLACK);
 
-    createRange(f1.direction, f1.start, f1.width, r.BLUE);
-    createRange(f2.direction, f2.start, f2.width, r.BLUE);
-    createRange(f3.direction, f3.start, f3.width, r.BLUE);
+    range.draw(f1);
+    range.draw(f2);
+    range.draw(f3);
+    range.draw(f4);
 
-    createRange(
-        d1.direction,
-        d1.range,
-        d1.width,
-        d1.detectedParticle ? r.RED : r.WHITE,
-    );
-    createRange(
-        d2.direction,
-        d2.range,
-        d2.width,
-        d2.detectedParticle ? r.RED : r.WHITE,
-    );
-    createRange(
-        d3.direction,
-        d3.range,
-        d3.height,
-        d3.detectedParticle ? r.RED : r.WHITE,
-    );
+    d.draw(d1);
+    d.draw(d2);
+    d.draw(d3);
 
     r.EndDrawing();
 }
