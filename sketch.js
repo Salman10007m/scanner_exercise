@@ -14,9 +14,9 @@ function setup(WIDTH, HEIGHT, FPS) {
 
     const world = {};
 
-    world.d1 = d.createDetector(50, 0, WIDTH / 2, 2, "Horizontal", WIDTH);
-    world.d2 = d.createDetector(50, WIDTH / 2, WIDTH, 2, "Horizontal", WIDTH);
-    world.d3 = d.createDetector(50, 0, HEIGHT, 2, "vertical", HEIGHT);
+    world.d1 = d.createDetector("Horizontal", 50, 0, WIDTH / 2, 2, WIDTH);
+    world.d2 = d.createDetector("Horizontal", 50, WIDTH / 2, WIDTH, 2, WIDTH);
+    world.d3 = d.createDetector("vertical", 50, 0, HEIGHT, 2, HEIGHT);
 
     world.f1 = p.createParticle("Horizontal", 200, 100, WIDTH);
     world.f2 = p.createParticle("Horizontal", 400, 50, WIDTH);
@@ -29,15 +29,15 @@ function setup(WIDTH, HEIGHT, FPS) {
 function update(world) {
     d.newVelocity(world.d1);
     d.currentPosition(world.d1);
-    world.d1.detectedParticle = range.overLaps(world.d1, world.f1, world.f2);
+    range.overLaps(world.d1, world.f1, world.f2);
 
     d.newVelocity(world.d2);
     d.currentPosition(world.d2);
-    world.d2.detectedParticle = range.overLaps(world.d2, world.f1, world.f2);
+    range.overLaps(world.d2, world.f1, world.f2);
 
     d.newVelocity(world.d3);
     d.currentPosition(world.d3);
-    world.d3.detectedParticle = range.overLaps(world.d3, world.f3, world.f4);
+    range.overLaps(world.d3, world.f3, world.f4);
 }
 
 function draw(world) {

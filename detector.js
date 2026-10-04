@@ -1,7 +1,7 @@
 const range = require("./range");
 const r = require("raylib");
 
-function createDetector(size, start, endPos, velocity, direction, screenSize) {
+function createDetector(direction, size, start, endPos, velocity, screenSize) {
     const startPos = start;
     return {
         direction,

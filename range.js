@@ -11,7 +11,8 @@ function overLaps(d, f1, f2) {
     const isF1OverLapping = isOverLapping(d, f1);
     const isF2OverLapping = isOverLapping(d, f2);
 
-    return isF1OverLapping || isF2OverLapping;
+    d.detectedParticle = isF1OverLapping || isF2OverLapping;
+    return d;
 }
 
 function draw(obj) {
